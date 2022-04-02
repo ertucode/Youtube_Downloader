@@ -17,7 +17,7 @@ class Button:
     width: int = 150
 
     def __post_init__(self):
-        self.button = customtkinter.CTkButton(master=self.root, text=self.text, command=self.func)
+        self.button = customtkinter.CTkButton(master=self.root, text=self.text, command=self.func,text_font=("Cascadia Code",9))
         self.button.configure(fg_color = self.color, hover_color = self.hcolor)
         if not self.width == 31:
             self.button.place(relx=self.locx, rely=self.locy, width=self.width, anchor=tkinter.CENTER)

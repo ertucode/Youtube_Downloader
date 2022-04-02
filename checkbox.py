@@ -26,7 +26,7 @@ class Checkbox:
             self.checkbox
         except:
             self.checkbox = customtkinter.CTkCheckBox(master=self.root, text= self.idd, variable=self.var, 
-                                                    offvalue="off", onvalue="on",command=self.checkbox_event)
+                                                    offvalue="off", onvalue="on",command=self.checkbox_event,text_font=("Cascadia Code",9))
         if self.state == "on":
             self.checkbox.select()
         if self.state == "off":

@@ -1,0 +1,10 @@
+python -m pip install auto-py-to-exe
+python -m auto-py-to-exe
+C:\Users\ertug\G_Drive\Code\Python\Youtube_Downloader_v3_venv\YoutubeVenv\Scripts\autopytoexe.exe
+
+C:\Users\ertug\G_Drive\Code\Python\Youtube_Downloader_v3_venv\YoutubeVenv\Lib\site-packages\customtkinter
+
+add icon
+
+add upx
+C:\Users\ertug\G_Drive\Code\Python\upx-3.96-win64

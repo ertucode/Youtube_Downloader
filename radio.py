@@ -14,7 +14,7 @@ class RadioButton:
         self.sharedVar[self.groupid].set(100)
         if self.idd == "NumText": self.idd = self.id
         self.radiobutton = customtkinter.CTkRadioButton(master=self.root, text=self.idd, variable=self.sharedVar[self.groupid], 
-                                                    command=self.radiobutton_event, value = self.id)
+                                                    command=self.radiobutton_event, value = self.id,text_font=("Cascadia Code",9))
         if self.groupid == 0:
             if self.id == 0:
                 self.radiobutton.pack(side = "left", pady=5, padx = 8)
@@ -28,9 +28,9 @@ class RadioButton:
             #     self.radiobutton.grid(row=1,column=0,pady=10)
 
             if self.idd == "Single Track":
-                self.radiobutton.pack(side = "left",padx = 10)
+                self.radiobutton.pack(side = "left",padx = 8)
             else: 
-                self.radiobutton.pack(side = "left",padx = 10)
+                self.radiobutton.pack(side = "left",padx = 8)
 
     def radiobutton_event(self):
         if self.groupid == 0:

@@ -6,21 +6,27 @@
 # --noconfirm --onedir --windowed --icon youtube.ico --add-data "c:\users\ertug\appdata\local\programs\python\python310\lib\site-packages\customtkinter;customtkinter\" "C:\Users\ertug\G_Drive\Code\Python\Youtube_Downloader_v3_venv\Youtube_Downloader_v3\Youtube_Downloader_v31.py"
 
 
+
+
 import tkinter
 from tkinter import ttk
+
+
 import customtkinter
 from checkbox import Checkbox
 from radio import RadioButton
 from button import Button
 from warnuser import WarnUser
+from combobox import ComboBox
+
 import sys
 from pytube import YouTube, Playlist
 import os
-import keyboard
-from enum import IntEnum
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+
+
 
 FRAMEBGCOLOR = "system3dDarkShadow"
 BGCOLOR = "gray12"
@@ -36,6 +42,9 @@ def q(text):
     while text[-1] == ".":
         text = text[:-1]
     return text
+
+
+
 
 def fixtitle(title):
     title = title.replace('"',"")
@@ -65,7 +74,7 @@ def best_audio(streams):
     return best
 
 class App():
-    def __init__(self,type,url):
+    def __init__(self,type="s",url=""):
         self.root = customtkinter.CTk()
         self.type = type
         self.url = url
@@ -80,7 +89,6 @@ class App():
         self.LISTFRAMEHEIGHT = self.HEIGHT * 0.7
         self.LISTFRAME = customtkinter.CTkFrame(master=self.root,corner_radius= 10, fg_color = FRAMEBGCOLOR)
         self.LISTFRAME.place(x = self.LISTFRAMEX,y = self.LISTFRAMEY , width = self.LISTFRAMEWIDTH, height = self.LISTFRAMEHEIGHT)
-
 
         self.LEFTFRAMEX = 50
         self.LEFTFRAMEY = self.HEIGHT * 0.05
@@ -100,25 +108,38 @@ class App():
         self.URLFRAME.place(x = self.LISTFRAMEX, y = self.UFRAMEY, width = self.LISTFRAMEWIDTH, height = self.UFRAMEHEIGHT)
 
         self.CONFRAMEY = self.UFRAMEY + self.UFRAMEHEIGHT + 20
-        self.CONFRAMEHEIGHT = self.HEIGHT * 0.25
+        self.CONFRAMEHEIGHT = self.HEIGHT * 0.275
         self.CONFRAMEWIDTH = self.WIDTH * 0.93
         self.CONSOLEFRAME = customtkinter.CTkFrame(master=self.root,corner_radius= 10,fg_color=FRAMEBGCOLOR)
         self.CONSOLEFRAME.place(x = self.LEFTFRAMEX, y = self.CONFRAMEY, width = self.CONFRAMEWIDTH, height = self.CONFRAMEHEIGHT)
 
-        self.LISTBOX = tkinter.Listbox(self.CONSOLEFRAME,font = "Consolas",fg = "gray84",bd = 0,bg =FRAMEBGCOLOR,width = 129,height = 6)
-        self.LISTBOX.place(relx=0, rely=0, anchor="nw")
+        self.changeStyle()
+        import tkinter.font as tkfont
+        goodfonts = "Century Schoolbook","Cascadia Code","Rockwell Extra Bold"
+        LISTBOXFONT = tkfont.Font(family="Cascadia Code", size = "9",weight="bold")
+        self.LISTBOX = tkinter.Listbox(self.CONSOLEFRAME,font = LISTBOXFONT,fg = "gray84",bd = 0,bg =FRAMEBGCOLOR,width = 168,height = 8)
+        ##come
+        self.LISTBOX.place(relx=-0.001, rely=-0.001, anchor="nw")
         self.STARTINGPOINT = 0
         self.PLAYLISTRADIOVARIABLE = tkinter.IntVar()
         self.PLAYLISTRADIOVARIABLE.set(self.STARTINGPOINT)   
-        self.PutLeftFrameItems()
         self.PutUrlFrameItems()
-        
         self.ChangeLayout()
+        self.PutLeftFrameItems()
+        
+    def changeStyle(self):
+        style= ttk.Style()
+        style.theme_use('clam')
+        style.configure("TCombobox", fieldbackground= FRAMEBGCOLOR, background= FRAMEBGCOLOR, foreground = "white", arrowcolor = "white",selectbackground="blue",lightcolor = FRAMEBGCOLOR)
+        style.configure("TCombobox", bordercolor = "white")
+        self.root.option_add('*TCombobox*Listbox.background', FRAMEBGCOLOR)
+        self.root.option_add('*TCombobox*Listbox.foreground', "white")
+        self.root.option_add('*TCombobox*Listbox.selectbackground', "dark slate gray")
 
     def PutUrlFrameItems(self):
         self.changeUrlButton = Button(self.URLFRAME,0.9,0.5,"Change Url",self.ChangeUrl,"coral1","red",150)
         self.URLENTRY = customtkinter.CTkEntry(master=self.URLFRAME, placeholder_text="Enter URL",
-                                        width = self.WIDTH * 0.4)
+                                        width = self.WIDTH * 0.4,text_font=("Cascadia Code",9))
         self.URLENTRY.pack(side = "left", padx = 8)
         self.URLENTRY.insert(0,self.url)
 
@@ -156,6 +177,7 @@ class App():
                 for child in self.LISTFRAME.winfo_children():
                     if not type(child).__name__ == "CTkCanvas":
                         child.destroy()
+                
                 del self.singleCheckBox
 
         except Exception as e:  print(f"{e} + >>>Exception")
@@ -168,38 +190,31 @@ class App():
         self.ChangeLayout()
 
     def PutLeftFrameItems(self):
-        self.selectAllButton= Button(self.LEFTFRAME,0.5,0.05,"Select All Items",self.SelectAll,"dark slate blue","purple1")
-        self.deselectAllButton = Button(self.LEFTFRAME,0.5,0.12,"Deselect All Items",self.deSelectAll,"maroon","black")
-        self.selectShownButton = Button(self.LEFTFRAME,0.5,0.19,"Select Shown Items",self.SelectShown,"dark slate blue","purple1")
-        self.deselectShownButton = Button(self.LEFTFRAME,0.5,0.26,"Deselect Shown Items",self.deSelectShown,"maroon","black")
+        self.selectAllButton= Button(self.LEFTFRAME,0.5,0.05,"Select All Items",self.SelectAll,"dark slate blue","purple1",width= 180)
+        self.deselectAllButton = Button(self.LEFTFRAME,0.5,0.12,"Deselect All Items",self.deSelectAll,"maroon","black",width= 180)
+        self.selectShownButton = Button(self.LEFTFRAME,0.5,0.19,"Select Shown Items",self.SelectShown,"dark slate blue","purple1",width= 180)
+        self.deselectShownButton = Button(self.LEFTFRAME,0.5,0.26,"Deselect Shown Items",self.deSelectShown,"maroon","black",width= 180)
+        
 
 
         self.vidbox = Checkbox(self.LEFTFRAME, "Video", 100, "off",type = "b",locx = 0.25,locy = 0.32)
         self.vidbox.packBox()
         self.audbox = Checkbox(self.LEFTFRAME, "Audio", 100, "off",type = "b",locx = 0.25,locy = 0.40)
         self.audbox.packBox()
-        self.subbox = Checkbox(self.LEFTFRAME, "Subtitle", 100, "off",type = "b",locx = 0.25,locy = 0.48)
-        self.subbox.packBox()
-
-        self.LANENTRY = customtkinter.CTkEntry(master=self.LEFTFRAME,placeholder_text="Lang",width=50,height=30,border_width=0,bg_color = "grey50",corner_radius=2)
-        self.LANENTRY.place(relx=0.8, rely=0.505, anchor=tkinter.CENTER)
-
-        def GiveAdvice():
-            WarnUser("Type tr for Turkish, en for English")
-
-        self.subQbut = Button(self.LEFTFRAME,0.12,0.505,"?",GiveAdvice,"PaleGreen4","SpringGreen4",width = 30)
         
         def Alltypes():
             if self.allbox.var.get() == "off":
                 self.vidbox.check()
                 self.audbox.check()
-                self.subbox.check()
+                try:self.subbox.check();
+                except:pass;
             elif self.allbox.var.get() == "on":
                 self.vidbox.decheck()
                 self.audbox.decheck()
-                self.subbox.decheck()
+                try:self.subbox.decheck();
+                except:pass;
 
-        self.allbox = Checkbox(self.LEFTFRAME, "All", 100, "off",type = "b",locx = 0.25,locy = 0.56)
+        self.allbox = Checkbox(self.LEFTFRAME, "All", 100, "off",type = "b",locx = 0.6,locy = 0.4)
         self.allbox.packBox()
         self.allbox.checkbox.configure(command = Alltypes) 
         self.downloadButton = Button(self.LEFTFRAME,0.5,0.9,"Download",self.DownloadButtonFunc,"grey16","grey30")
@@ -207,39 +222,45 @@ class App():
     def CheckIfUrlAgreesWithType(self):
         self.purl = False
         self.yurl = False
-
-        if self.type == "p":
-            try:
-                self.p = Playlist(self.url)
-                xd = self.p.title
-                self.purl = True
-            except:
+        if not self.url == "" and not self.url == " ":
+            if self.type == "p":
                 try:
-                    self.yt = YouTube(self.url,on_progress_callback=self.downloadCallback)
-                    self.type = "s"
-                    self.yurl = True
-                    WarnUser("You have given a single file link, But chosen playlist")
+                    self.p = Playlist(self.url)
+                    xd = self.p.title
+                    self.purl = True
                 except:
-                    WarnUser("Invalid URL")
+                    try:
+                        self.yt = YouTube(self.url,on_progress_callback=self.downloadCallback,on_complete_callback=self.doneCallback)
+                        self.type = "s"
+                        self.yurl = True
+                        WarnUser("You have given a single file link, But chosen playlist")
+                    except:
+                        WarnUser("Invalid URL")
 
-        if self.type == "s":
-            try:
-                p = Playlist(self.url)
-                xd = p.title
-                WarnUser("You have given a playlist link, But chosen single file")
-
-            except:
+            if self.type == "s":
                 try:
                     self.yt = YouTube(self.url,on_progress_callback=self.downloadCallback)
                     self.yurl = True
                 except:
-                    WarnUser("Invalid URL")
+                    try:
+                        p = Playlist(self.url)
+                        xd = p.title
+                        WarnUser("You have given a playlist link, But chosen single file")
+                    except:
+                        WarnUser("Invalid URL")
+
+    def doneCallback(self):
+        self.videoprogressbar.destroy()
+
+
+        
+
 
     def ChangeLayout(self):
         self.CheckIfUrlAgreesWithType()
         if self.purl:
             self.getTitlesAndYoutubes()
-            self.VIDEOCOUNT = len(self.p.video_urls)
+            self.VIDEOCOUNT = len(self.titles)
             self.LISTLENGTH = 10
             self.LISTCOUNT = roundUp(self.VIDEOCOUNT,self.LISTLENGTH)
 
@@ -262,18 +283,50 @@ class App():
             for box in self.checkBoxList[self.STARTINGPOINT]:
                 box.packBox()
 
+
         if self.yurl:
             self.LISTCOUNT = 1
             self.LISTLENGTH = 10
 
             self.singleCheckBox = Checkbox(self.LISTFRAME,f"{str(1)}",400,title = self.yt.title)
             self.singleCheckBox.packBox()
+
+        if self.yurl:
+            if self.yt.captions:
+                self.putSubFrameItems()
+            else:
+                for child in self.SUBFRAME.winfo_children():
+                    if not type(child).__name__ == "CTkCanvas":
+                        child.destroy()
+
+        if self.purl:
+            self.putSubFrameItems()
+
         
         self.changeUrlButton.button.set_text("Change Url")
         self.changeUrlButton.button.state = "normal"
         self.changeUrlButton.button.configure(fg_color = "coral1")
         self.changeUrlButton.button.configure(text_color = "white")
         self.root.update()
+
+    def putSubFrameItems(self):
+        self.SUBFRAME = customtkinter.CTkFrame(master=self.LEFTFRAME,corner_radius=10,fg_color=FRAMEBGCOLOR)
+        self.SUBFRAME.place(x = 0,y= self.LEFTFRAMEHEIGHT * 0.48, width = self.LEFTFRAMEWIDTH , height = self.LEFTFRAMEHEIGHT / 3)
+        self.subbox = Checkbox(self.SUBFRAME, "Sub", 100, "off",type = "b",locx = 0.25,locy = 0.02)
+        self.subbox.packBox()
+        def GiveAdvice():
+            WarnUser("[tr] > Turkish, [en] > English, [a.lang] Auto Generated")
+
+        self.subQbut = Button(self.SUBFRAME,0.1,0.1,"?",GiveAdvice,"PaleGreen4","SpringGreen4",width = 30)
+
+        captions = self.yt.captions if self.yurl else self.YouTubes[0].captions
+        self.suboptions = []
+        for capt in captions:
+            st = f"{capt}"
+            sts = st.split('"')
+            self.suboptions.append(sts[-2])
+        if len(self.suboptions) == 0: self.suboptions.append("en")
+        self.subcombo = ComboBox(self.SUBFRAME,0.8,0.1,5,self.suboptions)
 
     def getTitlesAndYoutubes(self):
         # Get titles and youtubes for playlist
@@ -314,6 +367,9 @@ class App():
                 self.titles = []
                 for item in NumberAndTitle:
                     self.titles.append(item[1])
+                if len(self.titles) > 210:
+                    self.titles = self.titles[:210]
+                    WarnUser("Can't put more than 210 videos")
 
         elif self.yurl:
             pass
@@ -340,7 +396,7 @@ class App():
         self.root.update()
 
     def printSameLine(self,text):
-        if self.LISTBOX.get("end")[1] == " ":
+        if self.LISTBOX.get("end")[1] == " " or self.LISTBOX.get("end")[1] == "-":
             self.LISTBOX.delete("end")
         self.LISTBOX.insert("end"," "+ text)
         self.LISTBOX.yview("end")
@@ -394,6 +450,7 @@ class App():
 
     def DownloadButtonFunc(self):
         if len(self.LISTFRAME.winfo_children()) > 1:
+            self.somevideochosen = False
             self.downloadButton.button.set_text("Downloading...")
             self.downloadButton.button.state = "disabled"
             self.downloadButton.button.configure(fg_color = "blue")
@@ -404,9 +461,11 @@ class App():
 
             self.audio = True if self.audbox.state == "on" else False
             self.video = True if self.vidbox.state == "on" else False
-            self.sub = True if self.subbox.state == "on" else False
-            self.lan = self.LANENTRY.get()
-            self.lan = self.lan if len(self.lan) > 0 else "en"
+            try:self.sub = True if self.subbox.state == "on" else False
+            except:self.sub = False
+            if self.sub:
+                self.lan = self.subcombo.combobox.get()
+                self.lan = self.lan if len(self.lan) > 0 else "en"
             try:
                 self.videoprogressbar.destroy()
             except:
@@ -428,8 +487,13 @@ class App():
                         if box.state == "on":
                             self.somevideochosen = True
                             if self.audio or self.sub or self.video:
+                                box.changeColor("sky blue")
                                 self.yt = self.YouTubes[int(box.id)-1]
                                 self.downloadVideo()
+                                try:
+                                    self.videoprogressbar.destroy()
+                                except:
+                                    pass 
                                 if not desiredItemCount == 1:
                                     downloadedCount += 1
                                     self.listprogressbar.set(downloadedCount / desiredItemCount)
@@ -438,24 +502,22 @@ class App():
             elif self.yurl:
                 # self.singleCheckBox.changeColor(COMPLETEDCOLOR)
                 if self.singleCheckBox.state == "on":
-                            if self.audio or self.sub or self.video:
-                                self.downloadVideo()
-                                self.singleCheckBox.changeColor(COMPLETEDCOLOR)
+                    self.somevideochosen = True
+                    if self.audio or self.sub or self.video:
+                        downloadedCount = 1
+                        self.downloadVideo()
+                        self.singleCheckBox.changeColor(COMPLETEDCOLOR)
+                        try:
+                            self.videoprogressbar.destroy()
+                        except:
+                            pass 
                             
-            try:
-                self.videoprogressbar.destroy()
-            except:
-                pass        
-            try:
-                self.listprogressbar.destroy()
-            except:
-                pass
 
             
             if self.audio or self.sub or self.video:
                 if not downloadedCount == 0:
-                    self.printNewLine("Downloads Completed!!")
-                    self.LISTBOX.itemconfig("end", {'fg': 'red'})
+                    self.printNewLine("Downloads Completed..")
+                    self.LISTBOX.itemconfig("end", {'fg': 'yellow'})
             else:
                 WarnUser("You have not chosen any file type")
 
@@ -465,6 +527,14 @@ class App():
             self.downloadButton.button.configure(state=tkinter.NORMAL)
             # butterminate.button.configure(state=tkinter.NORMAL)
 
+            try:
+                self.videoprogressbar.destroy()
+            except:
+                pass 
+            try:
+                self.listprogressbar.destroy()
+            except:
+                pass
             self.downloadButton.button.set_text("Download")
             self.downloadButton.button.state = "normal"
             self.downloadButton.button.configure(fg_color = "black")
@@ -472,7 +542,7 @@ class App():
 
 
     def downloadVideo(self): 
-        self.printNewLine(f"Downloading {self.yt.title}... - Close Application to Cancel")
+        self.printNewLine(f"Downloading - {self.yt.title} " + u"\u23e9" " Close Application to Cancel")
         
         if not self.purl:
             dir = f'{desktop}\\Youtube_Download'
@@ -486,47 +556,77 @@ class App():
         if self.video:
             best = self.yt.streams.filter(file_extension='mp4').filter(progressive=True).get_highest_resolution()
             best.download(output_path=dir)
-            self.printNewLine(f"Downloaded video: {dir}/{best.title}.{best.subtype}")
+            # self.printNewLine(f"Downloaded video: {dir}/{best.title}.{best.subtype}")
+            self.printSameLine("Video " + u"\u2714")
         if self.audio:
             audio = best_audio(self.yt.streams)
             audio.download(output_path=dir)
-            self.printNewLine(f"Downloaded audio: {dir}/{audio.title}.{audio.subtype}")
+            self.printSameLine("Audio " + u"\u2714")
         if self.sub:
             vtitle = fixtitle(self.yt.title)
             if (self.yt.captions):
-                picked = False
-                while not picked:
-                    if self.lan in self.yt.captions:
-                        caption = self.yt.captions[self.lan]
-                        picked = True
-                        text = caption.generate_srt_captions()
-                        text = text.replace('\u266a',"")
-                        try:
-                            with open(f"{dir}\\{q(vtitle)}.txt", 'w') as f:
-                                f.write(text)
-                            self.printNewLine(f"Downloaded subtitle: {dir}/{vtitle}.txt")
-                        except:
-                            self.printNewLine("Subtitle has unsupported characters")
-                    elif "a."+self.lan in self.yt.captions:
-                        caption = self.yt.captions["a."+self.lan]
-                        picked = True
-                        text = caption.generate_srt_captions()
-                        text = text.replace('\u266a',"")
-                        try:
-                            with open(f"{dir}\\{q(vtitle)}.txt", 'w', encoding="utf-8") as f:
-                                f.write(text)
-                                self.printNewLine(f"Downloaded subtitle: {dir}/{vtitle}.txt")
-                        except:
-                            self.printNewLine("Subtitle has unsupported characters")
-                    else:
-                        self.printNewLine(f"Language not available for {vtitle}")
-                        picked = True
+                if self.lan in self.yt.captions:
+                    self.downloadSub(vtitle,self.lan,dir)
+                elif "a."+self.lan in self.yt.captions:
+                    self.downloadSub(vtitle,"a."+self.lan,dir)
+                else:
+                    self.printNewLine("Subtitle" + u"\u2716" "Language not available")
 
             else:
                 self.printNewLine("Subtitle not available")
 
+    def downloadSub(self,vtitle,lan,dir):
+        
+        hours = self.yt.length / 60 / 60
+        minutes = (hours % 1) * 60
+        secs = ( minutes % 1) * 60
+        cutoff = 9.5
+        if (hours > cutoff):
+            estimation_in_minutes = (1175 + (89.28571 - 1175)/(1 + (int(hours)/16.07373)**428.7844)) / 60
+            self.printNewLine(f"-Downloading subtitle")
+            self.printNewLine(f"-Vidoe length: {int(hours)}:{int(minutes)}:{int(secs)} - Estimated subtitle download time: {estimation_in_minutes} min")
+
+        caption = self.yt.captions[lan]
+        text = caption.generate_srt_captions()
+        text = text.replace('\u266a',"")
+        lines = text.split("\n")
+        f = open(f"{dir}\\{q(vtitle)}_{lan}.txt", 'w')  
+
+        for i,line in enumerate(lines):
+            try:
+                f.write(f"{line}\n")
+            except:
+                f.write("Unsupported characters \n")
+        if (hours > cutoff):
+            self.LISTBOX.delete("end")
+        self.printSameLine("Subtitle " + u"\u2714")
+        f.close()
+
 if __name__ == "__main__":
-    app = App("p","https://www.youtube.com/playlist?list=PLzxuWjRUOmNaRwzAo4V8vhx66uPslWsue")
+    given = False
+
+    try:
+        given = sys.argv[1]
+        print(f"Input: {given}")
+    except:
+        pass
+    if given:
+
+        t1 = given
+        if t1[-1]=="/": t1 = t1[:-1]
+        t2 = t1[8:]
+        splits = t2.split(",")  
+        url = splits[0]
+        options = splits[1]
+
+        if options[0] == "P":
+            type = "p"
+        elif options[0] == "S":
+            type = "s"
+    if given:
+        app = App(type,url)
+    else:
+        app = App()
     app.root.mainloop()
 
 

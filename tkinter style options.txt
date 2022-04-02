@@ -1,0 +1,31 @@
+style= ttk.Style()
+style.theme_use('clam')
+print(style.element_options("TCombobox.vgrip"))
+style.configure("TCombobox"
+ ,fieldbackground= FRAMEBGCOLOR >> text background
+ ,background= FRAMEBGCOLOR >> arrow background
+ ,foreground = "white" >> text color
+ ,arrowcolor = "white" >> arrow color
+ ,selectbackground="blue" >> current selection color on the entry
+ ,lightcolor = "green") >> border color
+style.configure("TCombobox",bordercolor = FRAMEBGCOLOR) >> 2nd border color
+
+
+self.root.option_add('*TCombobox*Listbox.background',FRAMEBGCOLOR) >> listbox bg
+self.root.option_add('*TCombobox*Listbox.foreground',"white") >> text color
+self.root.option_add('*TCombobox*Listbox.selectBackground',"dark slate gray") >> current selection color on the list
+ 
+import tkinter.font as tkfont
+LISTBOXFONT = tkfont.Font(family="Georgie", size = "9")
+u"\u2713"
+## unicode
+https://www.key-shortcut.com/en/writing-systems/35-symbols/symbols-typography
+
+# import promptlib
+
+
+# def askdir():
+#     prompter = promptlib.Files()
+#     file = prompter.file()
+#     dir = prompter.dir()
+#     print(dir, '\n', file)
