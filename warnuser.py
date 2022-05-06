@@ -15,8 +15,11 @@ class WarnUser:
         self.root.title("Help")
         self.width = len(self.text) * 10 if len(self.text) * 10 > 200 else 200
         self.center_window()
-        def button_click_event():
+        def button_click_event(*args):
             self.root.destroy()
+
+        self.root.bind("<Return>", button_click_event)
+        self.root.bind("<Escape>", button_click_event)
 
         label = customtkinter.CTkLabel(master=self.root, text=self.text, width = self.width,text_font=("Cascadia Code",10))
         label.grid(row = 0,column = 0 , pady = 5)

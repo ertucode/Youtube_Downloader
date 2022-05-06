@@ -15,6 +15,7 @@ class Button:
     color: str
     hcolor: str
     width: int = 150
+    fontsize: int = 9
 
     def __post_init__(self):
         self.button = customtkinter.CTkButton(master=self.root, text=self.text, command=self.func,text_font=("Cascadia Code",9))

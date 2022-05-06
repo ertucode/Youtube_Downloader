@@ -4,10 +4,10 @@
 block_cipher = None
 
 
-a = Analysis(['C:/Users/ertug/G_Drive/Code/Python/Youtube_Downloader_v3_venv/Youtube_Downloader_v3/Youtube_Downloader_v31.py'],
+a = Analysis(['C:/Users/ertug/G_Drive/Code/Python/Youtube_Downloader_v3_venv/Youtube_Downloader_v3/Youtube_Downloader_v3.py'],
              pathex=[],
              binaries=[],
-             datas=[('C:/Users/ertug/G_Drive/Code/Python/Youtube_Downloader_v3_venv/YoutubeVenv/Lib/site-packages/customtkinter', 'customtkinter/')],
+             datas=[('C:/Users/ertug/G_Drive/Code/Python/Youtube_Downloader_v3_venv/YoutubeVenv/Lib/site-packages/customtkinter', 'customtkinter/'), ('C:/Users/ertug/G_Drive/Code/Python/Youtube_Downloader_v3_venv/Youtube_Downloader_v3/youtube.ico', '.')],
              hiddenimports=[],
              hookspath=[],
              hooksconfig={},
@@ -24,7 +24,7 @@ exe = EXE(pyz,
           a.scripts, 
           [],
           exclude_binaries=True,
-          name='Youtube_Downloader_v31',
+          name='Youtube_Downloader_v3',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -41,4 +41,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='Youtube_Downloader_v31')
+               name='Youtube_Downloader_v3')
